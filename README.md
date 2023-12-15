@@ -36,145 +36,163 @@ _Аналитика и Отчетность:_
 
 ## Таблицы
 
-- [x] **Book** 
+- [x] **book** 
 
-Содержит перечень книг. 
-
-
-Field|Name       | Constraint |
----- | ----------|------------|
-id   | Ключ  | Primary key|
-title| Заголовок |NOT NULL|
-author | Автор| NOT NULL|
-description | Краткое описание книги| NOT NULL|
-book_type_id |Тип книги| NOT NULL|
-publisher_id |Издатель| NOT NULL|
-year_publishing |Год издания| NOT NULL|
-toc  | Оглавление|NOT NULL|
+Книга. 
 
 
-- [x] **Book_type** 
+Field|Name       | Constraint | High cardinality|Index|
+---- | ----------|------------|----|-|
+id   | Ключ  | Primary key|||
+title| Заголовок |NOT NULL|||
+author | Автор| NOT NULL|||
+description | Краткое описание книги| NOT NULL|||
+book_type_id |Тип книги| NOT NULL|||
+publisher_id |Издатель| NOT NULL|||
+year_publishing |Год издания| NOT NULL|X|X|
+toc  | Оглавление|NOT NULL|||
 
-Содержит категории книг (электронная, бумажная, аудио). 
 
-Field|Name       | Constraint |
----- | ----------|------------|
-id   | Ключ  | Primary key|
-name| Категория |NOT NULL, UNIQUE|
+- [x] **book_type** 
+
+Категория книги (электронная, бумажная, аудио). 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|--|-|
+id   | Ключ  | Primary key|||
+name| Категория |NOT NULL, UNIQUE|||
 
 
-- [x] **Genre**
+- [x] **genre**
 
-Перечень жанров. 
+Жанр. 
 
-Field|Name       | Constraint |
----- | ----------|------------|
-id   | Ключ  | Primary key|
-name| Жанр |NOT NULL, UNIQUE|
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|--|-|
+id   | Ключ  | Primary key|||
+name| Жанр |NOT NULL, UNIQUE|||
 
-#### Индексы:
-<u> Поля с высокой кардинальностью: </u> 
-* Date_from
-* Date_to
-* Price
 
-Составной индекс: (Date_from, Date_to, Price)
-Может использоваться для запросов вида:
+- [x] **book_genre**
 
-Select
-prodict_id,
-max(price) 
-from
-Price
-where 
-date_from <= '01.01.2020' and 
-date_to >= '01.31.2021'
-group by 
-product_id
-;
+Жанр книги. 
 
-### Provider. 
-Содержит список поставщиков . 
-Структура
-* ID - первичный ключ
-* Name - Наименование (NOT NULL)
-* Country_ID - Код страны (NOT NULL)
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|--|-|
+id   | Ключ  | Primary key|||
+book_id| Книга |NOT NULL||X|
+genre_id|Жанр|NOT NULL||X|
 
-### Manufacturer. 
-Содержит список производителей . 
-Структура
-* ID - первичный ключ
-* Name - Наименование (NOT NULL)
-* Country_ID - Код страны (NOT NULL)
 
-### Customer. 
-Содержит список покупателей . 
-Структура
-* ID - первичный ключ
-* Name - Наименование (NOT NULL)
-* Customer_type_ID - Категория покупателя (NOT NULL)
-* Country_ID - Код страны (NOT NULL)
+- [x] **publisher**
 
-### Customer_type. 
-Содержит список категорий покупателей . 
-Структура
-* ID - первичный ключ (NOT NULL)
-* Name - Наименование (NOT NULL)
-* Discount - Размер скидки в % (NOT NULL),(CHECK Discount <=100)
+Издательство. 
 
-### Order. 
-Содержит список заказов . 
-Структура
-* ID - первичный ключ (позиция заказа)
-* Order_number - Номер заказа (NOT NULL)
-* Order_date - дата заказа (NOT NULL)
-* Month - месяц заказа (NOT NULL)
-* Year - год заказа (NOT NULL)
-* Customer_ID - Покупатель (NOT NULL)
-* Product_ID - Товар (NOT NULL)
-* Order_type_ID - Тип заказа (NOT NULL)
-* Quantity - Количество (NOT NULL),(CHECK Quantity >= 0)
-* Amount - сумма (NOT NULL),(CHECK Amount >= 0)
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|--|-|
+id   | Ключ  | Primary key|||
+name| Издательство |NOT NULL, UNIQUE|||
+country_id|Страна|NOT NULL|||
 
-#### Индексы:
-<u> Поля с высокой кардинальностью: </u> 
-* Date
-* Quantity
-* Amount
 
-Составной индекс: (Date, Month, Year, Product_ID, Quantity)
-Может использоваться для запросов вида:
+- [x] **country**
 
-Select
-Month,
-Year,
-Product_ID,
-sum(Quantity) 
-from
-Price
-where 
-date_from <= '01.01.2020' and 
-date_to >= '01.31.2021' and 
-Quantity > 100 and 
-Date between '01.01.2020' and '31.01.2020'
-group by 
-Month,
-Year,
-Product_ID
-;
+Страна. 
 
-### Order_type. 
-Содержит список типов заказов . 
-Структура
-* ID - первичный ключ
-* Name - Наименование (NOT NULL)
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|-|-|
+id   | Ключ  | Primary key|||
+iso_code| Международная аббревиатура |NOT NULL, UNIQUE|||
+name|Страна|NOT NULL|||
 
-### Country. 
-Содержит список стран . 
-Структура
-* ID - первичный ключ
-* Name - Наименование (NOT NULL)
-* Region - Регион (NOT NULL)
+
+- [x] **user**
+
+Пользователь. 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|--|-|
+id   | Ключ  | Primary key||
+login| Логин |NOT NULL, UNIQUE||
+f_name|Имя|||
+s_name|Фамилия|||
+email| Email |NOT NULL, UNIQUE||
+pwd_hash| Хеш-строка пароля |NOT NULL||
+time_created| Время создания |NOT NULL|X|X|
+last_visit| Время последнего посещения |NOT NULL|X|X|
+country_id| Страна |NOT NULL||
+birth_date| Дата рождения |NOT NULL|X|X|
+is_blocked| Флаг блокировки |NOT NULL||
+
+
+- [x] **review**
+
+Обзор книги. 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|-|-|
+id   | Ключ  | Primary key||
+user_id| Пользователь |NOT NULL||X|
+book_id|Книга|NOT NULL||X|
+score|Рейтинг||X|X|
+time_created| Время создания |NOT NULL||X|X|
+review| Краткий обзор |||
+
+
+- [x] **basket**
+
+Корзина. 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|-|-
+id   | Ключ  | Primary key||
+user_id| Пользователь |NOT NULL||X
+book_id|Книга|NOT NULL||X|
+quantity|Количество||X|X|
+time_added| Время добавления в корзину |NOT NULL|X|
+
+
+- [x] **order**
+
+Заказ. 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|-|-
+id   | Ключ  | Primary key||
+user_id| Пользователь |NOT NULL||X
+time_created| Время создания |NOT NULL|X|X
+time_closed| Время закрытия ||X|X
+status_id| Статус заказа |NOT NULL||X
+
+
+- [x] **order_item**
+
+Позиция заказа. 
+
+Field|Name       | Constraint |High cardinality|Index|
+---- | ----------|------------|-|-
+id   | Ключ  | Primary key||
+book_id| Книга |NOT NULL||X
+order_id| Заказ |NOT NULL||X
+quantity| Количество |NOT NULL|X|X
+price| Цена |NOT NULL|X|X
+amount| Сумма |NOT NULL|X|X
+
+CHECK (
+    (amount >= (0)) 
+AND (quantity >= (0)) 
+AND (price >= (0))
+)
+
+- [x] **status**
+
+Статус заказа. 
+
+Field|Name       | Constraint |High cardinality|
+---- | ----------|------------|-|
+id   | Ключ  | Primary key||
+name| Статус |NOT NULL, UNIQUE||
+
 
 
 
