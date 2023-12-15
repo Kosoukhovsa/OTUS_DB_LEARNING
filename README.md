@@ -179,7 +179,7 @@ amount| Сумма |NOT NULL|X|X
 
 CHECK (
     (amount >= (0)) 
-AND (quantity >= (0)) 
+AND (quantity > (0)) 
 AND (price >= (0))
 )
 
