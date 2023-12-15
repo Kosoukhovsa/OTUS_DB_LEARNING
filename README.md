@@ -36,7 +36,8 @@ _Аналитика и Отчетность:_
 
 ## Таблицы
 
-- [x] **Book**. 
+- [x] **Book** 
+
 Содержит перечень книг. 
 
 
@@ -52,7 +53,8 @@ year_publishing |Год издания| NOT NULL|
 toc  | Оглавление|NOT NULL|
 
 
-### Book_type. 
+- [x] **Book_type** 
+
 Содержит категории книг (электронная, бумажная, аудио). 
 
 Field|Name       | Constraint |
@@ -61,14 +63,14 @@ id   | Ключ  | Primary key|
 name| Категория |NOT NULL, UNIQUE|
 
 
-### Price. 
-Содержит цены товаров на разные периоды . 
-Структура
-* ID - первичный ключ
-* Date_from - Дата начала действия цены (NOT NULL)
-* Date_to - Дата окончания действия цены (NOT NULL)
-* Price - Цена (NOT NULL),(CHECK Price >= 0)
-* Product_ID - Продукт (NOT NULL)
+- [x] **Genre**
+
+Перечень жанров. 
+
+Field|Name       | Constraint |
+---- | ----------|------------|
+id   | Ключ  | Primary key|
+name| Жанр |NOT NULL, UNIQUE|
 
 #### Индексы:
 <u> Поля с высокой кардинальностью: </u> 
