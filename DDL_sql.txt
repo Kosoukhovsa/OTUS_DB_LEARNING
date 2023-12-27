@@ -1,0 +1,212 @@
+-- Create tablespace 
+-- Предварительно необходимо создать каталог /home/postgres/tmpltblspc и поменять владельца
+-- sudo su
+-- sudo mkdir /home/postgres
+-- sudo chown postgres /home/postgres
+-- sudo su postgres
+-- cd /home/postgres
+-- mkdir tmptblspc
+create TABLESPACE ts LOCATION '/home/postgres/tmpltblspc';
+
+-- Create database 
+create database IF NOT EXISTS books tablespace ts;
+
+CREATE SCHEMA IF NOT EXISTS books_store AUTHORIZATION postgres;
+-- Show current scheme
+show search_path;
+-- Set current scheme
+set search_path to books_store, public, "$user", pg_catalog, pg_temp;
+
+
+-- Get db size
+
+SELECT pg_size_pretty(pg_database_size('books'));
+SELECT pg_size_pretty(pg_tablespace_size('ts'));
+
+-- Table generation
+
+CREATE TABLE IF NOT EXISTS permission (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	description varchar NOT NULL,
+	is_admin bool NULL,
+	CONSTRAINT permission_pk PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS country (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	iso_code varchar NOT NULL,
+	"name" varchar NOT NULL,
+	CONSTRAINT country_pk PRIMARY KEY (id),
+	CONSTRAINT iso_uk UNIQUE (iso_code)
+);
+
+CREATE TABLE IF NOT EXISTS "user" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	login varchar NOT NULL,
+	f_name varchar NULL,
+	s_name varchar NULL,
+	email varchar NOT NULL,
+	pwd_hash varchar NOT NULL,
+	time_created timestamp NOT NULL,
+	last_visit timestamp NOT NULL,
+	country_id int4 NOT NULL,
+	birth_date date NOT NULL,
+	is_blocked bool NOT NULL,
+	CONSTRAINT email_uk UNIQUE (email),
+	CONSTRAINT login_uk UNIQUE (login),
+	CONSTRAINT user_pk PRIMARY KEY (id),
+	CONSTRAINT country_fk FOREIGN KEY (country_id) REFERENCES books_store.country(id)
+);
+
+CREATE TABLE IF NOT EXISTS "user_role" (
+	user_id int4 NOT NULL,
+	permission_id int4 NOT NULL,
+	CONSTRAINT role_fk FOREIGN KEY (permission_id) REFERENCES books_store."permission"(id),
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES books_store."user"(id)
+);
+
+CREATE TABLE IF NOT EXISTS "status" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	"name" varchar NOT NULL,
+	CONSTRAINT status_pk PRIMARY KEY (id),
+	CONSTRAINT status_uk UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS "genre" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	name varchar NOT NULL,
+	CONSTRAINT genre_pk PRIMARY KEY (id),
+	CONSTRAINT genre_uk UNIQUE (name)	
+);
+
+CREATE TABLE IF NOT EXISTS "book_type" (
+	"name" varchar NOT NULL,
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	CONSTRAINT book_type_pk PRIMARY KEY (id),
+	CONSTRAINT book_type_uk UNIQUE (name)
+);
+
+CREATE TABLE IF NOT EXISTS "publisher" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	"name" varchar NOT NULL,
+	country_id int4 NOT NULL,
+	CONSTRAINT publisher_pk PRIMARY KEY (id),
+	CONSTRAINT publisher_fk FOREIGN KEY (country_id) REFERENCES books_store.country(id)
+);
+
+CREATE TABLE IF NOT EXISTS "book" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	title varchar NOT NULL,
+	author varchar NOT NULL,
+	description varchar NOT NULL,
+	book_type_id int4 NOT NULL,
+	publisher_id int4 NOT NULL,
+	year_publishing varchar NOT NULL,
+	toc json NOT NULL,
+	CONSTRAINT book_pk PRIMARY KEY (id),
+	CONSTRAINT book_type_fk FOREIGN KEY (book_type_id) REFERENCES books_store.book_type(id),
+	CONSTRAINT publisher_fk FOREIGN KEY (publisher_id) REFERENCES books_store.publisher(id)
+);
+
+CREATE TABLE IF NOT EXISTS "book_genre" (
+	id int4 NOT NULL,
+	book_id int4 NOT NULL,
+	genre_id int4 NOT NULL,
+	CONSTRAINT book_genre_pk PRIMARY KEY (id),
+	CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES books_store.book(id),
+	CONSTRAINT genre_fk FOREIGN KEY (genre_id) REFERENCES books_store.genre(id)
+);
+
+CREATE TABLE IF NOT EXISTS  "review" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	user_id int4 NOT NULL,
+	book_id int4 NOT NULL,
+	score int4 NOT NULL,
+	time_created timestamp NOT NULL,
+	review text NULL,
+	CONSTRAINT review_pk PRIMARY KEY (id),
+	CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES books_store.book(id),
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES books_store."user"(id)
+);
+
+CREATE TABLE IF NOT EXISTS "order" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	user_id int4 NOT NULL,
+	time_created information_schema."time_stamp" NOT NULL,
+	time_closed information_schema."time_stamp" NULL,
+	status_id int4 NOT NULL,
+	CONSTRAINT order_pk PRIMARY KEY (id),
+	CONSTRAINT status_fk FOREIGN KEY (status_id) REFERENCES books_store.status(id),
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES books_store."user"(id)
+);
+
+CREATE TABLE IF NOT EXISTS "order_item" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	book_id int4 NOT NULL,
+	order_id int4 NOT NULL,
+	quantity numeric NOT NULL,
+	price numeric NOT NULL,
+	amount numeric NOT NULL,
+	CONSTRAINT order_item_check CHECK (((amount >= (0)::numeric) AND (quantity >= (0)::numeric) AND (price >= (0)::numeric))),
+	CONSTRAINT order_item_pk PRIMARY KEY (id),
+	CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES books_store.book(id),
+	CONSTRAINT order_fk FOREIGN KEY (order_id) REFERENCES books_store."order"(id)
+);
+
+CREATE TABLE IF NOT EXISTS "basket" (
+	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY( INCREMENT BY 1 MINVALUE 1 MAXVALUE 2147483647 START 1 CACHE 1 NO CYCLE),
+	user_id int4 NOT NULL,
+	book_id int4 NOT NULL,
+	quantity int4 NOT NULL,
+	time_added information_schema."time_stamp" NOT NULL,
+	order_id int4 NULL,
+	CONSTRAINT basket_check CHECK ((quantity > 0)),
+	CONSTRAINT basket_pk PRIMARY KEY (id),
+	CONSTRAINT book_fk FOREIGN KEY (book_id) REFERENCES books_store.book(id),
+	CONSTRAINT order_fk FOREIGN KEY (order_id) REFERENCES books_store."order"(id),
+	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES books_store."user"(id)
+);
+
+-- Roles
+
+-- Создание роли Admin
+CREATE ROLE Admin WITH NOLOGIN NOSUPERUSER INHERIT NOCREATEDB CREATEROLE REPLICATION;
+
+-- Назначение привилегий для Admin
+GRANT ALL PRIVILEGES ON DATABASE Books TO Admin;
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA books_store TO Admin;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA books_store TO Admin;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS IN SCHEMA books_store TO Admin;
+
+-- Создание роли Manager
+CREATE ROLE Manager NOLOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+
+-- Назначение привилегий для Manager
+GRANT SELECT ON ALL TABLES IN SCHEMA books_store TO Manager;
+GRANT UPDATE ON books_store.book TO Manager;
+GRANT UPDATE ON books_store.genre TO Manager;
+GRANT UPDATE ON books_store.book_genre TO Manager;
+GRANT UPDATE ON books_store.publisher To Manager;
+
+-- Создание роли Customer
+CREATE ROLE Customer NOLOGIN NOSUPERUSER INHERIT NOCREATEDB NOCREATEROLE NOREPLICATION;
+
+-- Назначение привилегий для Customer
+GRANT SELECT ON ALL TABLES IN SCHEMA books_store TO Customer;
+GRANT UPDATE ON books_store.review TO Customer;
+
+-- Создание пользователя books_admin с наследованием полномочий от Admin
+CREATE USER books_admin WITH LOGIN PASSWORD 'password' IN ROLE Admin;
+
+-- Создание пользователей manager_1 и manager_2 с наследованием полномочий от Manager
+CREATE USER manager_1 WITH LOGIN PASSWORD 'password' IN ROLE Manager;
+CREATE USER manager_2 WITH LOGIN PASSWORD 'password' IN ROLE Manager;
+
+-- Создание пользователей cust_1 и cust_2 с наследованием полномочий от Customer
+CREATE USER cust_1 WITH LOGIN PASSWORD 'password' IN ROLE Customer;
+CREATE USER cust_2 WITH LOGIN PASSWORD 'password' IN ROLE Customer;
+
+-- Отозвать полномочия у схемы PUBLIC
+REVOKE ALL ON DATABASE books FROM public;
+
+
