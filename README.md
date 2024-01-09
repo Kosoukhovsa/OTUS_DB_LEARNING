@@ -218,3 +218,5 @@ name| Статус |NOT NULL, UNIQUE||
 - **cust_1 и cust_2** - Наследуют роль Customer 
 
 
+## DML скрипт на примере БД sakila
+[sakila dml script](sakila_dml.sql)
