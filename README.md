@@ -220,3 +220,6 @@ name| Статус |NOT NULL, UNIQUE||
 
 ## DML скрипт на примере БД sakila
 [sakila dml script](sakila_dml.sql)
+
+## Пример создания индексов на примере БД sakils
+[sakila index scripts](index_task.sql)
