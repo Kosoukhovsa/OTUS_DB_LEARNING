@@ -223,3 +223,6 @@ name| Статус |NOT NULL, UNIQUE||
 
 ## Пример создания индексов на примере БД sakils
 [sakila index scripts](index_task.sql)
+
+## Пример работы с агрегирующими, window function и CTE
+[sakila index scripts](home_task.sql)
