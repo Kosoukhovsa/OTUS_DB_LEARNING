@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+	<title></title>
+	<meta name="generator" content="LibreOffice 7.3.7.2 (Linux)"/>
+	<meta name="created" content="2024-02-11T13:01:14.738520739"/>
+	<meta name="changed" content="2024-02-11T14:57:20.839661937"/>
+	<style type="text/css">
+		@page { size: 8.27in 11.69in; margin: 0.79in }
+		p { line-height: 115%; margin-bottom: 0.1in; background: transparent }
+		a:link { color: #000080; text-decoration: underline }
+		a:visited { color: #800000; text-decoration: underline }
+		code.western { font-family: "Liberation Mono", monospace }
+		code.cjk { font-family: "Noto Sans Mono CJK SC", monospace }
+		code.ctl { font-family: "Liberation Mono", monospace }
+	</style>
+</head>
+<body lang="en-US" link="#000080" vlink="#800000" dir="ltr"><p style="line-height: 100%; margin-bottom: 0in">
+<font size="4" style="font-size: 15pt"><b>1.   Физическая
+репликация</b></font></p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Проверить
+наличие кластеров</p>
+<p style="line-height: 100%; margin-bottom: 0in">Есть один
+кластер – 14 main на порту 5432</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_b0bb3eba354cbe08.gif" name="Image1" align="left" width="643" height="68" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Проверить
+тип репликации на сервере</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"> <img src="Home%20task%20replication_html_36aeb28e633f3059.gif" name="Image2" align="left" width="643" height="164" border="0"/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Настроена
+физическая репликация</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Создадим
+новый кластер  14 main 2</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_788dca5e0b6b2eba.gif" name="Image3" align="left" width="643" height="316" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">К нему можно
+будет обратиться по порту 5433</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Удалим оттуда
+файлы</p>
+<p style="line-height: 100%; margin-bottom: 0in">sudo rm -rf
+/var/lib/postgresql/14/main2</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Сделаем бэкап
+нашей БД. Ключ -R создаст заготовку
+управляющего файла recovery.conf.</p>
+<p style="line-height: 100%; margin-bottom: 0in">sudo -u postgres
+pg_basebackup -p 5432 -R -D /var/lib/postgresql/14/main2</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_d736799062b2a534.gif" name="Image4" align="left" width="643" height="25" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Стартуем
+кластер</p>
+<p style="line-height: 100%; margin-bottom: 0in">sudo pg_ctlcluster
+12 main2 start</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_30072082a0ede219.gif" name="Image5" align="left" width="643" height="52" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Проверим
+состояние реплики</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_a8f4600a0ed14344.gif" name="Image6" align="left" width="643" height="53" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_bfa20ab310383af0.gif" name="Image7" align="left" width="643" height="131" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Создадим на
+мастере новую БД и таблицу 
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_8c5a1eed95c812df.gif" name="Image8" align="left" width="643" height="131" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Проверим что
+данные появились на реплике</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_68ba54b13d57be38.gif" name="Image9" align="left" width="643" height="175" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Установим
+на реплике параметр отсрочки репликации
+<span style="display: inline-block; border: none; padding: 0in"><span style="font-variant: normal"><font color="#000000"><font face="monospace, monospace"><span style="letter-spacing: normal"><span style="font-style: normal"><span style="font-weight: normal"><code class="western">recovery_min_apply_delay</span></span></span></span></font></font></span></code><span style="font-variant: normal"><font color="#000000"><span style="letter-spacing: normal">&nbsp;</span></font></span></p>
+<p style="line-height: 100%; margin-bottom: 0in"><span style="font-variant: normal"><font color="#000000"><span style="letter-spacing: normal">И
+рестартуем кластер 14 main2</span></font></span></p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_952945c23feacacf.gif" name="Image10" align="left" width="643" height="26" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Добавим на
+мастере запись 
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_6807fd7b4bfad5cb.gif" name="Image11" align="left" width="643" height="26" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">На реплике
+ее нет. Ждем 5 минут 
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Проверяем</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><img src="Home%20task%20replication_html_709df7e6056833b.gif" name="Image12" align="left" width="418" height="312" border="0"/>
+<br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in">Данные
+появились</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="line-height: 100%; margin-bottom: 0in"><font size="4" style="font-size: 15pt"><b>1.
+  Логическая репликация</b></font></p>
+<p style="line-height: 100%; margin-bottom: 0in"><br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Переведем реплику
+в режим мастера</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Проверяем что
+репликация отстутствует на мастере и
+на сервере</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_2ef00635301bb951.gif" name="Image13" align="left" width="643" height="248" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Меняем параметр
+на мастере </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">ALTER SYSTEM SET wal_level =
+logical;</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_8c2ef4d61af561e2.gif" name="Image14" align="left" width="483" height="80" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Перезагружаем
+кластер 14 main </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_fa14953095411b66.gif" name="Image15" align="left" width="643" height="76" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Меняем параметр
+отсрочки загрузки на бывшей реплике </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_a80a3fa17c6c2a45.gif" name="Image16" align="left" width="643" height="49" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Перезагружаем
+кластер 14 main2</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Создаем новую
+таблицу test_data2 на мастере </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_eb6dbc6ac557fc71.gif" name="Image17" align="left" width="643" height="240" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Создаем публикацию
+на мастере </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_208839421a23c679.gif" name="Image18" align="left" width="643" height="198" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Создадим таблицу
+test_data2 на принимающем кластере</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_93578bed7fe06bc9.gif" name="Image20" align="left" width="643" height="20" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Создадим подписку
+на кластере main2</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">create subscription test_subsc
+connection 'host=localhost port=5432 user=postgres password=...
+dbname=test' publication test_pub with (copy_data=true);</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Данные появились
+на принимающем кластере</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_2c97301ea5695546.gif" name="Image19" align="left" width="460" height="279" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Добавили запись
+в исходной таблице</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_eb486dd615f70f1e.gif" name="Image21" align="left" width="527" height="63" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Она появилась в
+принимающей</font></p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_adb23d33ceb1b5ea.gif" name="Image22" align="left" width="527" height="322" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<font size="3" style="font-size: 12pt">Удалим подписку </font>
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<img src="Home%20task%20replication_html_5e218a379241dc41.gif" name="Image23" align="left" width="582" height="88" border="0"/>
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+<p style="font-weight: normal; line-height: 100%; margin-bottom: 0in">
+<br/>
+
+</p>
+</body>
+</html>
